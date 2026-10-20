@@ -30,14 +30,14 @@ public class VulnerableApp {
 
         // Vulnerable to command injection
         Process process = runtime.exec("ls " + userInput);
-        BufferedReader reader = new BufferedReader(
-            new InputStreamReader(process.getInputStream())
-        );
-
         StringBuilder output = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            output.append(line).append("\n");
+        try (BufferedReader reader = new BufferedReader(
+            new InputStreamReader(process.getInputStream())
+        )) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
         }
         return output.toString();
     }
