@@ -6,7 +6,6 @@ import java.io.*;
 public class VulnerableApp {
 
     // Hardcoded credentials - SAST issue
-    private static final String DB_PASSWORD = "admin123";
     private static final String API_KEY = "sk-1234567890abcdef";
 
     // SQL Injection vulnerability
@@ -59,10 +58,14 @@ public class VulnerableApp {
 
     private Connection getConnection() throws SQLException {
         // Using hardcoded password
+        String dbPassword = System.getProperty("db.password");
+        if (dbPassword == null) {
+            throw new SQLException("Database password not configured");
+        }
         return DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/testdb",
             "admin",
-            DB_PASSWORD
+            dbPassword
         );
     }
 
