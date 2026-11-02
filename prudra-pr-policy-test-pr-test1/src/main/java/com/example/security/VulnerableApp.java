@@ -2,12 +2,19 @@ package com.example.security;
 
 import java.sql.*;
 import java.io.*;
+import java.util.Objects;
 
 public class VulnerableApp {
 
     // Hardcoded credentials - SAST issue
-    private static final String DB_PASSWORD = "admin123";
-    private static final String API_KEY = "sk-1234567890abcdef";
+    private static final String DB_PASSWORD = Objects.requireNonNull(
+        System.getenv("DB_PASSWORD"),
+        "DB_PASSWORD environment variable must be set"
+    );
+    private static final String API_KEY = Objects.requireNonNull(
+        System.getenv("API_KEY"),
+        "API_KEY environment variable must be set"
+    );
 
     // SQL Injection vulnerability
     public User getUserById(String userId) throws SQLException {
@@ -58,7 +65,6 @@ public class VulnerableApp {
     }
 
     private Connection getConnection() throws SQLException {
-        // Using hardcoded password
         return DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/testdb",
             "admin",
