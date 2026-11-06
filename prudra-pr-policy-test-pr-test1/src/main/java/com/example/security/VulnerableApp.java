@@ -11,17 +11,16 @@ public class VulnerableApp {
 
     // SQL Injection vulnerability
     public User getUserById(String userId) throws SQLException {
-        Connection conn = getConnection();
-        Statement stmt = conn.createStatement();
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE id = '" + userId + "'")) {
 
-        // Vulnerable to SQL injection
-        String query = "SELECT * FROM users WHERE id = '" + userId + "'";
-        ResultSet rs = stmt.executeQuery(query);
-
-        if (rs.next()) {
-            return new User(rs.getString("name"), rs.getString("email"));
+            // Vulnerable to SQL injection
+            if (rs.next()) {
+                return new User(rs.getString("name"), rs.getString("email"));
+            }
+            return null;
         }
-        return null;
     }
 
     // Command Injection vulnerability
